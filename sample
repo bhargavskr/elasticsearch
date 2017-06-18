@@ -1,0 +1,578 @@
+PUT /ecommerce
+{
+  "mappings":{
+    "product":{
+      "properties": {
+        "name":{
+          "type": "text"
+        },
+        "price":{
+          "type": "double"
+        },
+        "description":{
+          "type": "text"
+        },
+        "status":{
+          "type": "text"
+        },
+        "quantity":{
+          "type": "integer"
+        },
+        "categories":{
+          "type": "nested",
+          "properties": {
+            "name":{
+              "type":"text"
+            }
+          }
+        },
+        "tags":{
+          "type": "text"
+        }
+      }
+    }
+  }
+}
+
+PUT /ecommerce/product/1001
+{
+  "name":"Angular 2 Framework",
+  "price": 733.22,
+  "description": "learn Angular 4 in 5 hours",
+  "status":"active",
+  "quantity":1,
+  "categories":[
+    { 
+      "name":"software"
+      
+    }
+    ],
+  "tags":["web framework","programming","web","javascript"]
+}
+
+POST /ecommerce/product/1001/_update
+{  
+  "doc":{
+   "price": 7.22
+  }  
+}
+
+DELETE /ecommerce/product/1001
+
+
+POST /ecommerce/product/_bulk
+{ "index":{"_id":"1002"}}
+{"name":"Angular 4 Framework","price": 933.22,"description": "learn Angular 4 in 09 hours","status":"active","quantity":1,"categories":[{"name":"software"}],"tags":["web framework","web","javascript"]}
+{"index":{"_id":"1003"}}
+{"name":"Angular JS Framework","price": 93.22,"description": "learn Angular 4 in 10 hours","status":"active","quantity":1,"categories":[{"name":"software"}],"tags":["programming","web","javascript"]}
+
+POST /ecommerce/product/_bulk
+{ "update":{"_id":"1002"}}
+{"doc":{"quantity":7}}
+
+GET /ecommerce/product/1002
+
+GET ecommerce/product/_search?q=*
+
+GET ecommerce/product/_search?q="pasta"
+
+GET ecommerce/product/_search?q=name:pasta
+
+GET ecommerce/product/_search?q=description:pasta
+
+GET ecommerce/product/_search?q=(name:(pasta OR spaghetti) AND status:(active))
+
+GET /ecommerce/product/_search?q=name:+pasta -spaghetti
+
+GET ecommerce/product/_search?q=name:"pasta spaghetti"
+
+GET /ecommerce/product/_search?q=name:"spaghetti pasta"
+
+GET /ecommerce/product/_search?q=name:"pasta spaghetti"
+
+GET /_analyze?analyzer=standard&text=pasta - spaghetti
+
+GET /ecommerce/product/_search
+{
+  "query": {
+    "match": {
+      "name": "pasta"
+    }
+  }
+}
+
+
+GET /ecommerce/product/_search
+{
+  "query": {
+    "multi_match": {
+      "query": "pasta", 
+      "fields": ["name","description"]
+    }
+  }
+}
+
+GET /ecommerce/product/_search
+{
+  "query": {
+    "match_phrase": {
+      "name": "pasta spaghetti"
+    }
+  }
+}
+
+GET ecommerce/product/_search
+{
+  "query": {
+    "term": {
+      "status": {
+        "value": "active"
+      }
+    }
+  }
+}
+
+GET ecommerce/product/_search
+{
+  "query": {
+    "terms": {
+      "status":  ["active","inactive"]
+      }
+  }
+}
+
+GET /ecommerce/product/_search
+{
+  "query": {
+    "range": {
+      "quantity": {
+        "gte": 1,
+        "lte": 10
+      }
+    }
+  }
+}
+
+GET /ecommerce/product/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {"match": {
+          "name": "pasta"
+        }},
+        {
+          "match": {
+            "name": "spaghetti"
+          }
+        }
+      ]
+    }
+  }
+}
+
+GET /ecommerce/product/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {"match": {
+          "name": "pasta"
+        }}
+      ],
+      "must_not": [
+        {
+          "match": {
+            "name": "spaghetti"
+          }
+        }
+      ]
+    }
+  }
+}
+
+GET /ecommerce/product/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {"match": {
+          "name": "pasta"
+        }}
+      ],
+      "should": [
+        {
+          "match": {
+            "name": "spaghetti"
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+GET /ecommerce/product/_search
+{
+  "query": {
+    "bool": {
+      
+      "should": [
+        {
+          "match": {
+            "name": "spaghetti"
+          }
+        }
+      ]
+    }
+  }
+}
+
+PUT /myfoodblog/recipe/1
+{
+  "name":"Pasta Quattro Formaggi",
+  "description":"It is an italian dish",
+  "ingredients":[{
+    "name":"American Cheese",
+    "amount":"500g"
+  },
+  {
+    "name":"Provolone Cheese",
+    "amount":"500g"
+  },
+  {
+    "name":"Cheddar Cheese",
+    "amount":"500g"
+  },
+  {
+    "name":"Cheese",
+    "amount":"400g"
+  }
+  ]
+}
+
+GET /myfoodblog/recipe/1
+
+GET /_cat/indices?v
+
+GET /myfoodblog
+
+GET /ecommerce,myfoodblog/product/_search?q=pasta
+
+GET /ecommerce,myfoodblog/product,recipe/_search?q=pasta&size=15
+
+GET /-ecommerce,%2Bmyfoodblog/product,recipe/_search?q=pasta
+
+GET /_all/product/_search?q=pasta
+
+GET /_all/_search?q=pasta
+
+GET /ecommerce/product/_search?q=past~1
+
+GET /ecommerce/product/_search
+{
+  "query": {
+    "match": {
+      "name": {
+        "query": "past",
+        "fuzziness": 1
+      }
+      
+    }
+  }
+}
+
+GET /ecommerce/product/_search
+{
+  "query": {
+    "match": {
+      "name": {
+        "query": "past",
+        "fuzziness": "AUTO"
+      }
+      
+    }
+  }
+}
+
+GET /ecommerce/product/_search
+{
+  "query": {
+    "match": {
+      "name": {
+        "query": "past",
+        "fuzziness": "AUTO",
+        "prefix_length": 3
+      }
+      
+    }
+  }
+}
+
+GET /ecommerce/product/_search?q=name:"pasta spaghetti"~2
+
+GET /ecommerce/product/_search?q=description:"spaghetti pasta"~2
+
+GET ecommerce/product/_search
+{
+  "query": {
+    "match_phrase": {
+      "name": {
+        "query": "pasta spaghetti",
+        "slop": 2 
+      }
+    }
+  }
+}
+
+
+GET /ecommerce/product/_search?q=name:pasta spaghetti^2.0
+
+GET /ecommerce/product/_search?q=name:"pasta spaghetti"^2.0
+
+GET /ecommerce/product/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {"match": {
+          "name": "pasta"
+        }}
+      ],
+      "should": [
+        {
+          "match": {
+            "name": {
+              "query":"spaghetti",
+              "boost":2.0
+            }
+          }
+        },  
+        {
+          "match": {
+            "name": {
+              "query": "noodle",
+              "boost":1.5
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+GET ecommerce/product/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "name": "pasta"
+          }
+        }
+      ],
+      "filter": [{
+        "range":{
+          "quantity":{
+            "gte":10,
+            "lte":15
+          }
+        }
+      }]
+    }
+  }
+}
+
+GET ecommerce/product/_search?q=name:pasta&size=2
+
+GET ecommerce/product/_search
+{
+  "query": {
+    "match": {
+      "name": "pasta"
+    }
+  },
+  "size": 2
+}
+
+GET ecommerce/product/_search?q=name:pasta&size=5&from=5
+
+
+GET ecommerce/product/_search
+{
+  "query": {
+    "match": {
+      "name": "pasta"
+    }
+  },
+  "size": 5,
+  "from": 5
+}
+
+GET ecommerce/product/_search
+{
+  "query": {
+    "match": {
+      "name": "pasta"
+    }
+  },
+  "sort":[
+    {
+      "quantity": {
+        "order": "asc"
+      }
+    }
+    ]
+}
+
+
+GET ecommerce/product/_search
+{
+  "query": {
+    "match": {
+      "name": "pasta"
+    }
+  },
+  "sort":[
+    {
+      "quantity": {
+        "order": "desc"
+      }
+    }
+    ]
+}
+
+GET ecommerce/product/_search
+{
+  "query": {
+    "match_all": {}
+  },
+  "size": 0,
+  "aggs": {
+    "quantity_sum": {
+      "sum": {
+        "field": "quantity"
+      }
+    }
+  }
+}
+GET ecommerce/product/_search
+{
+  "query": {
+    "match": {
+      "name": "pasta"
+    }
+  },
+  "size": 0,
+  "aggs": {
+    "quantity_sum": {
+      "sum": {
+        "field": "quantity"
+      }
+    }
+  }
+}
+
+GET ecommerce/product/_search
+{
+  "query": {
+    "match": {
+      "name": "pasta"
+    }
+  },
+  "size": 0,
+  "aggs": {
+    "quantity_avg": {
+      "avg": {
+        "field": "quantity"
+      }
+    }
+  }
+}
+
+GET ecommerce/product/_search
+{
+  "query": {
+    "match": {
+      "name": "pasta"
+    }
+  },
+  "size": 0,
+  "aggs": {
+    "quantity_min": {
+      "min": {
+        "field": "quantity"
+      }
+    }
+  }
+}
+
+GET ecommerce/product/_search
+{
+  "query": {
+    "match": {
+      "name": "pasta"
+    }
+  },
+  "size": 0,
+  "aggs": {
+    "quantity_max": {
+      "max": {
+        "field": "quantity"
+      }
+    }
+  }
+}
+
+GET ecommerce/product/_search
+{
+  "query": {
+    "match": {
+       "name": "pasta"
+    }
+  },
+  "size": 0,
+  "aggs": {
+    "quantity_stats": {
+      "stats": {
+        "field": "quantity"
+      }
+    }
+  }
+}
+
+GET ecommerce/product/_search
+{
+  "query": {
+    "match_all": {}
+  },
+  "size": 0,
+  "aggs": {
+    "quantity_ranges": {
+      "range": {
+        "field": "quantity",
+        "ranges": [
+          {
+            "from": 1,
+            "to": 50
+          },
+          {
+            "from":50,
+            "to":100
+          }
+        ]
+      },
+      "aggs": {
+        "quantity_stats": {
+          "stats": {
+            "field": "quantity"
+          }
+        }
+      }
+    }
+  }
+}
+
+http://localhost:5601/app/kibana#/discover?_g=()&_a=(columns:!(_source),index:ecommerce,interval:auto,query:'',sort:!(_score,desc))
